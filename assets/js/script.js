@@ -8,24 +8,43 @@ var taskFormHandler = function (event) {
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     var taskTypeInput = document.querySelector("select[name='task-type'").value;
 
-    //package up data as an object
-    var taskDataObj = {
-        name: taskNameInput,
-        type: taskTypeInput
-    };
-
     // check if input values are empty
     if (!taskNameInput || !taskTypeInput) {
         alert("You need to fill out the task form!");
         return false;
-    }
+    };
+
+    // check if we're editing or adding new
+    var isEdit = formEl.hasAttribute("data-task-id");
+    if (isEdit) {
+        var taskId = formEl.getAttribute("data-task-id");
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
+    } else {
+        //package up data as an object
+        var taskDataObj = {
+            name: taskNameInput,
+            type: taskTypeInput
+        };
+
+        createTaskEl(taskDataObj);
+    };
 
     // reset form to empty
     formEl.reset();
-
-    // send object as an argument to createTaskEl
-    createTaskEl(taskDataObj);
 };
+
+var completeEditTask = function(taskName, taskType, taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "'");
+
+    // set new values from edited form inputs
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+    taskSelected.querySelector("span.task-type").textContent = taskType;
+    alert("Task updated!");
+
+    // reset form
+    formEl.removeAttribute("data-task-id");
+    document.querySelector("#save-task").textContent = "Add Task";
+}
 
 var createTaskEl = function (taskDataObj) {
     // create list item
@@ -131,7 +150,6 @@ var editTask = function(taskId) {
 
     // update form submit button text
     document.querySelector("#save-task").textContent = "Save Task";
-
 };
 
 var deleteTask = function(taskId) {
