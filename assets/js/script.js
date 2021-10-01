@@ -45,13 +45,14 @@ var completeEditTask = function(taskName, taskType, taskId) {
     taskSelected.querySelector("h3.task-name").textContent = taskName;
     taskSelected.querySelector("span.task-type").textContent = taskType;
     
-    // loop through tasks array and update task object with new content
+    // loop through tasks array and update task object with new content, then save to localStorage
     for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id === parseInt(taskId)) {
             tasks[i].name = taskName;
             tasks[i].type = taskType;
         }
     };
+    saveTasks();
 
     // reset form
     formEl.removeAttribute("data-task-id");
@@ -79,9 +80,10 @@ var createTaskEl = function (taskDataObj) {
     // add entire li to list
     tasksToDoEl.appendChild(listItemEl);
 
-    // store task data in tasks array
+    // store task data in tasks array, then save to localStorage
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
+    saveTasks();
 
     // increase task counter for the next unique id
     taskIdCounter++;
@@ -183,8 +185,9 @@ var deleteTask = function(taskId) {
         }
     }
 
-    // reassign the tasks arry to be the same as updatedTaskArr
+    // reassign the tasks arry to be the same as updatedTaskArr, then save to localStorage
     tasks = updatedTasksArr;
+    saveTasks();
 };
 
 var taskStatusChangeHandler = function(event) {
@@ -205,13 +208,18 @@ var taskStatusChangeHandler = function(event) {
         tasksCompletedEl.appendChild(taskSelected);
     }
 
-    // loop through tasks array and update task object with new content
+    // loop through tasks array and update task object with new content, then save to localStorage
     for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id === parseInt(taskId)) {
             tasks[i].status = statusValue;
         }
     };
+    saveTasks();
 }
+
+var saveTasks = function() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
 formEl.addEventListener("submit", taskFormHandler);
 
