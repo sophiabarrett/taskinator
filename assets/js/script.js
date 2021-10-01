@@ -77,8 +77,17 @@ var createTaskEl = function (taskDataObj) {
     var taskActionsEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionsEl);
 
-    // add entire li to list
-    tasksToDoEl.appendChild(listItemEl);
+    // append task to correct list
+    if (taskDataObj.status === "to do") {
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+        tasksToDoEl.appendChild(listItemEl);
+    } else if (taskDataObj.status === "in progress") {
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+        tasksInProgressEl.appendChild(listItemEl);
+    } else if (taskDataObj.status === "completed") {
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+        tasksCompletedEl.appendChild(listItemEl);
+    }
 
     // store task data in tasks array, then save to localStorage
     taskDataObj.id = taskIdCounter;
@@ -194,7 +203,7 @@ var taskStatusChangeHandler = function(event) {
     // get the task item's id
     var taskId = event.target.getAttribute("data-task-id");
 
-    // get the currently selecte option's value and convert to lowercase
+    // get the currently selected option's value and convert to lowercase
     var statusValue = event.target.value.toLowerCase();
 
     // find the parent task item element based on the id
@@ -236,8 +245,7 @@ var loadTasks = function() {
     // loop through each saved task and pass to create task function
     for (var i = 0; i < savedTasks.length; i++) {
         createTaskEl(savedTasks[i]);
-    }
-    
+    } 
 }
 
 loadTasks();
